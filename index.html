@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bé Đức ❤️</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+<body>
+
+<div id="hearts"></div>
+
+<!-- LOGIN -->
+
+<section id="login-screen">
+
+<div class="login-card">
+
+<div class="left-side">
+
+<img src="images/1.jpg" alt="avatar">
+
+<h2>Bé Đức ❤️</h2>
+
+<p>Nhập mật khẩu để mở quà</p>
+
+</div>
+
+<div class="right-side">
+
+<div class="heart-icon">
+❤️
+</div>
+
+<div id="pin-display">
+○ ○ ○ ○
+</div>
+
+<div class="keypad">
+
+<button class="num">1</button>
+<button class="num">2</button>
+<button class="num">3</button>
+
+<button class="num">4</button>
+<button class="num">5</button>
+<button class="num">6</button>
+
+<button class="num">7</button>
+<button class="num">8</button>
+<button class="num">9</button>
+
+<div></div>
+
+<button class="num">0</button>
+
+<button id="delete-btn">
+⌫
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- HOME -->
+
+<section id="home-screen" class="hidden">
+
+<h1 class="title">
+For Bé Đức ❤️
+</h1>
+
+<div class="menu-grid">
+
+<div class="menu-card" onclick="openPage('music')">
+
+<i class="fa-solid fa-music"></i>
+
+<span>Music</span>
+
+</div>
+
+<div class="menu-card" onclick="openPage('letter')">
+
+<i class="fa-solid fa-envelope"></i>
+
+<span>Letter</span>
+
+</div>
+
+<div class="menu-card" onclick="openPage('gallery')">
+
+<i class="fa-solid fa-image"></i>
+
+<span>Images</span>
+
+</div>
+
+<div class="menu-card" onclick="openPage('gift')">
+
+<i class="fa-solid fa-gift"></i>
+
+<span>Gift</span>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- MUSIC -->
+
+<section id="music" class="page hidden">
+
+<div class="window">
+
+<button class="close-btn"
+onclick="closePage('music')">
+×
+</button>
+
+<h2 class="music-title">🎧 Music Player</h2>
+
+<div class="music-player">
+
+<div class="now-playing">
+<img id="current-cover" src="images/b18127fe-bdc1-4eac-a08e-9e908db3d36c.jpg" alt="Bài đang phát">
+<h3 id="current-title">Anh</h3>
+<div class="time-row">
+<span id="current-time">0:00</span>
+<span id="duration-time">0:00</span>
+</div>
+<div class="progress-bar">
+<div id="progress-fill"></div>
+</div>
+<div class="player-controls">
+<button id="prevBtn" type="button"><i class="fa-solid fa-backward-step"></i></button>
+<button id="mainPlayBtn" type="button"><i class="fa-solid fa-play"></i></button>
+<button id="nextBtn" type="button"><i class="fa-solid fa-forward-step"></i></button>
+</div>
+</div>
+
+<div class="playlist">
+<button class="song-card active" type="button"
+data-src="music/Em.mp3"
+data-title="Anh"
+data-cover="images/b18127fe-bdc1-4eac-a08e-9e908db3d36c.jpg">
+<img src="images/b18127fe-bdc1-4eac-a08e-9e908db3d36c.jpg" alt="Em Là Của Anh">
+<span>Anh</span>
+<i class="fa-solid fa-play song-icon"></i>
+</button>
+
+<button class="song-card" type="button"
+data-src="music/Buông.mp3"
+data-title="Thích"
+data-cover="images/Messenger_creation_349652983849917.jpeg">
+<img src="images/Messenger_creation_349652983849917.jpeg" alt="Buông">
+<span>Thích</span>
+<i class="fa-solid fa-play song-icon"></i>
+</button>
+
+<button class="song-card" type="button"
+data-src="music/Không buông - Hngle, Ari.mp3"
+data-title="Em"
+data-cover="images/Messenger_creation_587886085858394.jpeg">
+<img src="images/Messenger_creation_587886085858394.jpeg" alt="Không buông">
+<span>Em</span>
+<i class="fa-solid fa-play song-icon"></i>
+</button>
+</div>
+
+</div>
+
+<audio id="audio"></audio>
+
+</div>
+
+</section>
+
+<!-- LETTER -->
+
+<section id="letter" class="page hidden">
+
+<div class="window">
+
+<button class="close-btn"
+onclick="closePage('letter')">
+×
+</button>
+
+<h2>💌 Gửi Bé Đức</h2>
+
+<p id="typing"></p>
+
+</div>
+
+</section>
+
+<!-- GALLERY -->
+
+<section id="gallery" class="page hidden">
+
+<div class="window">
+
+<button class="close-btn"
+onclick="closePage('gallery')">
+×
+</button>
+
+<h2>📷 Kỷ Niệm</h2>
+
+<div class="gallery-grid">
+
+<img src="images/1.jpg">
+<img src="images/Messenger_creation_349652983849917.jpeg" >
+<img src="images/Messenger_creation_587886085858394.jpeg" >
+<img src="images/Messenger_creation_794349074908446.jpeg" >
+<img src="images/Messenger_creation_823486696153897.jpeg" >
+<img src="images/Messenger_creation_884630373179561.jpeg" >
+<img src="images/Messenger_creation_1630210337379056.jpeg" >
+<img src="images/Messenger_creation_2098406523853251.jpeg" >
+<img src="images/Messenger_creation_D83CB99C-E3DE-44BD-BD25-6E8AA8619574.jpeg" >
+
+</div>
+
+</div>
+
+</section>
+
+<!-- GIFT -->
+
+<section id="gift" class="page hidden">
+
+<div class="window">
+
+<button class="close-btn"
+onclick="closePage('gift')">
+×
+</button>
+
+<h2>Love You</h2>
+
+<p class="gift-text">
+
+    Những kỷ niệm của chúng ta sẽ bay cao, bay xa...
+    <br>
+    Cảm ơn em vì tất cả ❤️
+
+</p>
+
+</div>
+
+</section>
+
+<script src="script.js"></script>
+
+</body>
+</html>
