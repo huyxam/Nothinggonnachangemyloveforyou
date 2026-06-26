@@ -19,7 +19,7 @@ body{
 
 #login-screen{
     width:100%;
-    height:100vh;
+    min-height:100svh; /* Sử dụng small viewport height để tránh bị thanh địa chỉ che mất */
 
     display:flex;
     justify-content:center;
@@ -188,7 +188,7 @@ body{
 #home-screen{
 
     width:100%;
-    height:100vh;
+    min-height:100svh; /* Sử dụng small viewport height */
 
     display:flex;
 
@@ -838,6 +838,33 @@ body{
     .login-card{
 
         flex-direction:column;
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .left-side img {
+        width: 180px;
+        height: 220px;
+    }
+
+    .left-side h2 {
+        margin-top: 15px;
+        font-size: 20px;
+    }
+
+    .keypad {
+        grid-template-columns: repeat(3, 60px);
+        gap: 12px;
+        margin-top: 10px; /* Giảm khoảng cách trên bàn phím */
+    }
+
+    #pin-display {
+        margin-bottom: 15px;
+    }
+
+    .keypad button {
+        width: 60px;
+        height: 60px;
     }
 
     .menu-grid{
