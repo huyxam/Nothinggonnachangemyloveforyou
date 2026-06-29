@@ -1,4 +1,7 @@
 const CORRECT_PIN = "1505";
+const MAX_ACTIVE_HEARTS = 30;
+const MAX_FALLING_FLOWERS = 18;
+const MAX_LOGIN_FLOWERS = 40;
 
 let currentPin = "";
 
@@ -80,9 +83,10 @@ function createLoginFlower() {
 }
 
 function triggerLoginFlowerExplosion() {
-    const thoiGianHieuUng = 1000; // Thời gian hiệu ứng (ms)
-    const hoaMoiKhungHinh = 7;   // Số lượng hoa tạo ra mỗi khung hình
+    const thoiGianHieuUng = 800; // Thời gian hiệu ứng (ms)
+    const hoaMoiKhungHinh = 2;   // Số lượng hoa tạo ra mỗi khung hình
     let thoiGianBatDau = null;
+    let flowersCreated = 0;
 
     function vongLapHieuUng(thoiGianHienTai) {
         if (!thoiGianBatDau) {
@@ -91,11 +95,11 @@ function triggerLoginFlowerExplosion() {
 
         const thoiGianDaTroiQua = thoiGianHienTai - thoiGianBatDau;
 
-        if (thoiGianDaTroiQua < thoiGianHieuUng) {
+        if (thoiGianDaTroiQua < thoiGianHieuUng && flowersCreated < MAX_LOGIN_FLOWERS) {
             for (let i = 0; i < hoaMoiKhungHinh; i++) {
                 createLoginFlower();
+                flowersCreated += 1;
             }
-            // Yêu cầu trình duyệt chạy lại hàm này ở khung hình tiếp theo
             requestAnimationFrame(vongLapHieuUng);
         }
     }
@@ -468,6 +472,10 @@ function startTyping(){
 
 function createHeart(){
 
+    if (document.querySelectorAll('.heart').length >= MAX_ACTIVE_HEARTS) {
+        return;
+    }
+
     const heart =
     document.createElement("div");
 
@@ -493,7 +501,7 @@ function createHeart(){
     },9000);
 }
 
-setInterval(createHeart,400);
+setInterval(createHeart,600);
 
 /* BALLOON EFFECT */
 
@@ -665,6 +673,10 @@ images.forEach(img=>{
 });
 
 function createFallingFlower(parent){
+
+    if (parent.querySelectorAll('.falling-flower').length >= MAX_FALLING_FLOWERS) {
+        return;
+    }
 
     const flowers =
     ["🌸","🌺","💮","🌹","💗","💕"];

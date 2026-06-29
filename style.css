@@ -203,6 +203,17 @@ body::before {
     }
 }
 
+.login-flower,
+.heart,
+.falling-flower,
+.overlay-heart,
+.bursting-flower,
+.balloon,
+.balloon-love-text {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
 /* HOME */
 
 .hidden{
@@ -236,9 +247,11 @@ body::before {
 
     display:grid;
 
-    grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns:repeat(2, minmax(180px, 1fr));
 
     gap:25px;
+
+    width:min(420px, 100%);
 }
 
 .menu-card{
