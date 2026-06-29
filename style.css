@@ -357,6 +357,8 @@ body::before {
     background:#ff4d94;
 
     color:white;
+    font-size: 18px;
+    display: flex;
 
     cursor:pointer;
 }
@@ -638,6 +640,65 @@ body::before {
     color:#d9006c;
 }
 
+/* MUSIC SEARCH */
+
+.music-search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.music-search-form input {
+    flex-grow: 1;
+    height: 48px;
+    border: 1px solid #f3c6d9;
+    border-radius: 12px;
+    padding: 0 18px;
+    font-size: 15px;
+    background: #fff8fb;
+    color: #d21773;
+    outline: none;
+    transition: .25s;
+}
+
+.music-search-form input::placeholder {
+    color: #f0a0c3;
+}
+
+.music-search-form input:focus {
+    border-color: #ef8ab6;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(239, 138, 182, 0.3);
+}
+
+.music-search-form button {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 12px;
+    background: #d9006c;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.music-search-form button:hover {
+    background: #e00070;
+    transform: scale(1.05);
+}
+
+/* YOUTUBE IFRAME PLAYER (HIDDEN) */
+#youtube-player {
+    /* This hides the player visually while keeping it functional */
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+}
 /* LETTER */
 
 #typing{

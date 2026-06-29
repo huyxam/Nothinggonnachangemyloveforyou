@@ -149,15 +149,22 @@ For NiNi ❤️
 
 <button class="close-btn"
 onclick="closePage('music')">
-×
+<i class="fa-solid fa-xmark"></i>
 </button>
+
+<!-- DÁN ĐOẠN MÃ TÌM KIẾM VÀO ĐÂY -->
+<form class="music-search-form" id="music-search-form">
+    <input type="text" id="music-search-input" placeholder="Gõ tên bài hát để phát nhạc..." autocomplete="off">
+    <button type="submit" aria-label="Tìm kiếm"><i class="fa-solid fa-search"></i></button>
+</form>
+
 
 <h2 class="music-title">🎧 Music Player</h2>
 
 <div class="music-player">
 
 <div class="now-playing">
-<img id="current-cover" src="images/IMG_7520.JPG" alt="Bài đang phát">
+<img id="current-cover" src="images/IMG_7520.JPG" alt="Bìa nhạc cho bài Tớ">
 <h3 id="current-title">Tớ</h3>
 <div class="time-row">
 <span id="current-time">0:00</span>
@@ -174,37 +181,38 @@ onclick="closePage('music')">
 </div>
 
 <div class="playlist">
-<button class="song-card active" type="button"
+<div class="song-card active"
 data-src="music/Em.mp3"
 data-title="Tớ"
 data-cover="images/IMG_7520.JPG">
-<img src="images/IMG_7520.JPG" alt="Em Là Của Anh">
+<img src="images/IMG_7520.JPG" alt="Bìa nhạc cho bài Tớ">
 <span>Tớ</span>
 <i class="fa-solid fa-play song-icon"></i>
-</button>
+</div >
 
-<button class="song-card" type="button"
+<div class="song-card"
 data-src="music/Buông.mp3"
 data-title="Thích"
 data-cover="images/IMG_7536.JPG">
-<img src="images/IMG_7536.JPG" alt="Buông">
+<img src="images/IMG_7536.JPG" alt="Bìa nhạc cho bài Thích">
 <span>Thích</span>
 <i class="fa-solid fa-play song-icon"></i>
-</button>
+</div >
 
-<button class="song-card" type="button"
+<div class="song-card"
 data-src="music/Không buông - Hngle, Ari.mp3"
 data-title="Cậu"
 data-cover="images/IMG_7555.JPG">
-<img src="images/IMG_7555.JPG" alt="Không buông">
+<img src="images/IMG_7555.JPG" alt="Bìa nhạc cho bài Cậu">
 <span>Cậu</span>
 <i class="fa-solid fa-play song-icon"></i>
-</button>
+</div >
 </div>
 
 </div>
 
 <audio id="audio"></audio>
+<div id="youtube-player"></div>
 
 </div>
 
@@ -218,7 +226,7 @@ data-cover="images/IMG_7555.JPG">
 
 <button class="close-btn"
 onclick="closePage('letter')">
-×
+<i class="fa-solid fa-xmark"></i>
 </button>
 
 <h2>💌 Gửi NiNi</h2>
@@ -237,7 +245,7 @@ onclick="closePage('letter')">
 
 <button class="close-btn"
 onclick="closePage('gallery')">
-×
+<i class="fa-solid fa-xmark"></i>
 </button>
 
 <h2>📷 Kỷ Niệm</h2>
@@ -270,7 +278,7 @@ onclick="closePage('gallery')">
 
 <button class="close-btn"
 onclick="closePage('gift')">
-×
+<i class="fa-solid fa-xmark"></i>
 </button>
 
 <h2>Love You</h2>

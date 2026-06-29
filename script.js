@@ -197,11 +197,22 @@ function closePage(id){
 
 /* MUSIC PLAYER */
 
+const YOUTUBE_API_KEY = "AIzaSyChRK2-zrpIMUtxpHjNxlhL9AQ1nSEkIfU"; // <-- PASTE YOUR NEW KEY HERE
+const YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/search";
+
 const audio =
 document.getElementById("audio");
 
-const songCards =
+let songCards =
 document.querySelectorAll(".song-card");
+
+const musicSearchForm =
+document.getElementById("music-search-form");
+
+const musicSearchInput =
+document.getElementById("music-search-input");
+
+const musicSearchButton = musicSearchForm ? musicSearchForm.querySelector('button') : null;
 
 const currentCover =
 document.getElementById("current-cover");
@@ -228,6 +239,50 @@ const nextBtn =
 document.getElementById("nextBtn");
 
 let currentSongIndex = 0;
+
+// --- YOUTUBE IFRAME PLAYER SETUP ---
+let ytPlayer;
+let ytPlayerReady = false;
+let ytTimeInterval = null;
+let activePlayerType = 'audio'; // Can be 'audio' or 'youtube'
+let videoToPlayOnReady = null;
+
+function onYouTubeIframeAPIReady() {
+    ytPlayer = new YT.Player('youtube-player', {
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
+    });
+}
+
+function onPlayerReady(event) {
+    ytPlayerReady = true;
+    if (videoToPlayOnReady) {
+        ytPlayer.loadVideoById(videoToPlayOnReady);
+        videoToPlayOnReady = null;
+    }
+}
+
+function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.ENDED) {
+        const nextIndex = (currentSongIndex + 1) % songCards.length;
+        loadSong(nextIndex);
+        playCurrentSong();
+    }
+    if (event.data === YT.PlayerState.PLAYING) {
+        startYouTubeTimeUpdater();
+        durationTime.innerHTML = formatTime(ytPlayer.getDuration());
+    }
+    if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+        stopYouTubeTimeUpdater();
+    }
+}
+
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 function resetSongCards(){
 
@@ -267,23 +322,43 @@ function loadSong(index){
     const card =
     songCards[index];
 
+    // Stop any currently playing media from both players
+    stopYouTubeTimeUpdater();
+    audio.pause();
+    if (ytPlayerReady) {
+        ytPlayer.stopVideo();
+    }
+
     currentSongIndex = index;
 
+    resetSongCards();
+    card.classList.add("active");
+
     currentCover.src =
-    card.dataset.cover;
+    card.dataset.cover || "images/731147341_1538994267804714_5516651451943610122_n.jpg";
+
+    currentCover.alt = `Bìa nhạc cho bài ${card.dataset.title}`;
 
     currentTitle.innerHTML =
     card.dataset.title;
-
-    if(audio.src !== new URL(card.dataset.src, window.location.href).href){
-
-        audio.src =
-        card.dataset.src;
+    
+    // Check if it's a YouTube song or a local file
+    if (card.dataset.youtubeId) {
+        activePlayerType = 'youtube';
+        audio.src = ""; // Clear audio source
+        currentTime.innerHTML = "0:00";
+        durationTime.innerHTML = "0:00";
+        progressFill.style.width = "0%";
+        
+        if (ytPlayerReady) {
+            ytPlayer.loadVideoById(card.dataset.youtubeId);
+        } else {
+            videoToPlayOnReady = card.dataset.youtubeId;
+        }
+    } else { // It's a local audio file
+        activePlayerType = 'audio';
+        audio.src = card.dataset.src;
     }
-
-    resetSongCards();
-
-    card.classList.add("active");
 }
 
 function playCurrentSong(){
@@ -291,7 +366,11 @@ function playCurrentSong(){
     const card =
     songCards[currentSongIndex];
 
-    audio.play();
+    if (activePlayerType === 'youtube' && ytPlayerReady) {
+        ytPlayer.playVideo();
+    } else if (activePlayerType === 'audio') {
+        audio.play();
+    }
 
     card.classList.add("playing");
 
@@ -310,7 +389,11 @@ function pauseCurrentSong(){
     const card =
     songCards[currentSongIndex];
 
-    audio.pause();
+    if (activePlayerType === 'youtube' && ytPlayerReady) {
+        ytPlayer.pauseVideo();
+    } else if (activePlayerType === 'audio') {
+        audio.pause();
+    }
 
     card.classList.remove("playing");
 
@@ -338,27 +421,37 @@ function toggleSong(index){
     playCurrentSong();
 }
 
-songCards.forEach((card,index)=>{
-
-    card.addEventListener("click",()=>{
-
-        toggleSong(index);
+const playlistEl = document.querySelector('.playlist');
+if (playlistEl) {
+    playlistEl.addEventListener('click', (e) => {
+        const card = e.target.closest('.song-card');
+        if (card && playlistEl.contains(card)) {
+            // Re-query to get the current list of cards in the DOM
+            const allCards = Array.from(document.querySelectorAll(".song-card"));
+            const index = allCards.indexOf(card);
+            if (index > -1) {
+                toggleSong(index);
+            }
+        }
     });
-});
+}
 
 mainPlayBtn.addEventListener("click",()=>{
 
-    if(!audio.src){
-
-        loadSong(currentSongIndex);
+    let isPaused;
+    if (activePlayerType === 'youtube' && ytPlayerReady) {
+        const state = ytPlayer.getPlayerState();
+        isPaused = (state !== YT.PlayerState.PLAYING);
+    } else {
+        if (!audio.src) {
+            loadSong(currentSongIndex);
+        }
+        isPaused = audio.paused;
     }
 
-    if(audio.paused){
-
+    if (isPaused) {
         playCurrentSong();
-
-    }else{
-
+    } else {
         pauseCurrentSong();
     }
 });
@@ -385,33 +478,163 @@ nextBtn.addEventListener("click",()=>{
 
 audio.addEventListener("loadedmetadata",()=>{
 
-    durationTime.innerHTML =
-    formatTime(audio.duration);
+    if (activePlayerType === 'audio') {
+        durationTime.innerHTML =
+        formatTime(audio.duration);
+    }
 });
 
 audio.addEventListener("timeupdate",()=>{
 
-    currentTime.innerHTML =
-    formatTime(audio.currentTime);
+    if (activePlayerType === 'audio') {
+        currentTime.innerHTML =
+        formatTime(audio.currentTime);
 
-    if(audio.duration){
+        if(audio.duration){
 
-        progressFill.style.width =
-        `${audio.currentTime / audio.duration * 100}%`;
+            progressFill.style.width =
+            `${audio.currentTime / audio.duration * 100}%`;
+        }
     }
 });
 
 audio.addEventListener("ended",()=>{
 
-    const nextIndex =
-    (currentSongIndex + 1) % songCards.length;
+    if (activePlayerType === 'audio') {
+        const nextIndex =
+        (currentSongIndex + 1) % songCards.length;
 
-    loadSong(nextIndex);
+        loadSong(nextIndex);
 
-    playCurrentSong();
+        playCurrentSong();
+    }
 });
 
 loadSong(currentSongIndex);
+
+/* --- YOUTUBE SEARCH & PLAY LOGIC --- */
+
+function startYouTubeTimeUpdater() {
+    stopYouTubeTimeUpdater();
+    ytTimeInterval = setInterval(() => {
+        if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+            const current = ytPlayer.getCurrentTime();
+            const duration = ytPlayer.getDuration();
+            currentTime.innerHTML = formatTime(current);
+            if (duration > 0) {
+                progressFill.style.width = `${(current / duration) * 100}%`;
+            }
+        }
+    }, 500);
+}
+
+function stopYouTubeTimeUpdater() {
+    clearInterval(ytTimeInterval);
+}
+
+async function searchYouTube(query) {
+    const params = new URLSearchParams({
+        part: 'snippet',
+        q: query,
+        key: YOUTUBE_API_KEY,
+        type: 'video',
+        maxResults: 1
+    });
+
+    try {
+        const response = await fetch(`${YOUTUBE_API_URL}?${params}`);
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("YouTube API Error:", errorData);
+            throw new Error(`YouTube API error: ${errorData.error.message}`);
+        }
+
+        const data = await response.json();
+        if (data.items && data.items.length > 0) {
+            const item = data.items[0];
+            const thumbnails = item.snippet.thumbnails || {};
+            const thumbnailUrl =
+                (thumbnails.maxres && thumbnails.maxres.url) ||
+                (thumbnails.standard && thumbnails.standard.url) ||
+                (thumbnails.high && thumbnails.high.url) ||
+                (thumbnails.medium && thumbnails.medium.url) ||
+                (thumbnails.default && thumbnails.default.url) ||
+                "images/731147341_1538994267804714_5516651451943610122_n.jpg";
+
+            return {
+                videoId: item.id.videoId,
+                title: item.snippet.title,
+                thumbnailUrl
+            };
+        }
+    } catch (error) {
+        console.error("Failed to fetch from YouTube API:", error);
+        alert("Lỗi khi tìm kiếm trên YouTube. Vui lòng kiểm tra API Key và kết nối mạng.");
+    }
+    return null;
+}
+
+function addAndPlaySong({ videoId, title, coverUrl }) {
+    const playlist = document.querySelector(".playlist");
+    if (!playlist) return;
+
+    const fallbackCover = "images/731147341_1538994267804714_5516651451943610122_n.jpg";
+    const coverSrc = coverUrl || fallbackCover;
+
+    const newCard = document.createElement("div");
+    newCard.className = "song-card";
+    newCard.dataset.cover = coverSrc;
+    newCard.dataset.title = title;
+    newCard.dataset.youtubeId = videoId;
+
+    newCard.innerHTML = `
+        <img src="${coverSrc}" alt="Cover for ${title}" onerror="this.src='${fallbackCover}'">
+        <span>${title}</span>
+        <i class="fa-solid fa-play song-icon"></i>
+    `;
+
+    playlist.prepend(newCard);
+    songCards = document.querySelectorAll(".song-card");
+    toggleSong(0);
+}
+
+if (musicSearchForm) {
+    musicSearchForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const query = musicSearchInput.value.trim();
+        if (!query) return;
+ 
+        // IMPORTANT: Replace the old key!
+        if (YOUTUBE_API_KEY.startsWith("YOUR_") || YOUTUBE_API_KEY.includes("za-za448") || YOUTUBE_API_KEY.includes("qvKGJNM") || YOUTUBE_API_KEY.includes("R5foTk8") || YOUTUBE_API_KEY.includes("2eAo96A")) {
+            alert("API Key đã bị lộ hoặc chưa được thay! Vui lòng tạo và sử dụng một YouTube API Key MỚI trong file script.js.");
+            return;
+        }
+ 
+        // --- Start Loading State ---
+        musicSearchInput.placeholder = "Đang tìm kiếm...";
+        musicSearchInput.disabled = true;
+        if (musicSearchButton) {
+            musicSearchButton.disabled = true;
+            musicSearchButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        }
+ 
+        try {
+            const video = await searchYouTube(query);
+            if (video) {
+                addAndPlaySong({ ...video });
+                musicSearchInput.value = "";
+            }
+        } finally {
+            // --- End Loading State ---
+            musicSearchInput.placeholder = "Gõ tên bài hát để phát nhạc...";
+            musicSearchInput.disabled = false;
+            if (musicSearchButton) {
+                musicSearchButton.disabled = false;
+                musicSearchButton.innerHTML = '<i class="fa-solid fa-search"></i>';
+            }
+        }
+    });
+}
 
 /* LETTER */
 
