@@ -538,7 +538,7 @@ async function searchYouTube(query) {
         q: query,
         key: YOUTUBE_API_KEY,
         type: 'video',
-        maxResults: 1
+        maxResults: 10 // Lấy nhiều kết quả hơn
     });
 
     try {
@@ -551,27 +551,13 @@ async function searchYouTube(query) {
 
         const data = await response.json();
         if (data.items && data.items.length > 0) {
-            const item = data.items[0];
-            const thumbnails = item.snippet.thumbnails || {};
-            const thumbnailUrl =
-                (thumbnails.maxres && thumbnails.maxres.url) ||
-                (thumbnails.standard && thumbnails.standard.url) ||
-                (thumbnails.high && thumbnails.high.url) ||
-                (thumbnails.medium && thumbnails.medium.url) ||
-                (thumbnails.default && thumbnails.default.url) ||
-                "images/731147341_1538994267804714_5516651451943610122_n.jpg";
-
-            return {
-                videoId: item.id.videoId,
-                title: item.snippet.title,
-                thumbnailUrl
-            };
+            return data.items; // Trả về toàn bộ danh sách kết quả
         }
     } catch (error) {
         console.error("Failed to fetch from YouTube API:", error);
         alert("Lỗi khi tìm kiếm trên YouTube. Vui lòng kiểm tra API Key và kết nối mạng.");
     }
-    return null;
+    return []; // Trả về mảng rỗng nếu có lỗi hoặc không có kết quả
 }
 
 function addAndPlaySong({ videoId, title, coverUrl }) {
@@ -598,6 +584,75 @@ function addAndPlaySong({ videoId, title, coverUrl }) {
     toggleSong(0);
 }
 
+const searchResultsPopup = document.getElementById('search-results-popup');
+const searchResultsBody = document.getElementById('search-results-body');
+const searchResultsClose = document.getElementById('search-results-close');
+
+function hideSearchResults() {
+    if (!searchResultsPopup || searchResultsPopup.classList.contains('hidden')) return;
+
+    if (modalBackdrop) {
+        // Chỉ ẩn lớp nền nếu popup gợi ý cũng đang ẩn
+        if (!hintPopup || hintPopup.classList.contains('hidden')) {
+            modalBackdrop.classList.remove('show');
+        }
+    }
+    searchResultsPopup.classList.remove('show');
+
+    setTimeout(() => {
+        searchResultsPopup.classList.add('hidden');
+        if (modalBackdrop && (!hintPopup || hintPopup.classList.contains('hidden'))) {
+            modalBackdrop.classList.add('hidden');
+        }
+    }, 420);
+}
+
+function displaySearchResults(results) {
+    searchResultsBody.innerHTML = ''; // Xóa kết quả cũ
+
+    if (results.length === 0) {
+        searchResultsBody.innerHTML = '<p style="padding: 1rem; text-align: center;">Không tìm thấy kết quả nào.</p>';
+    } else {
+        const resultsList = document.createElement('div');
+        resultsList.className = 'playlist'; // Tái sử dụng style của playlist
+
+        results.forEach(item => {
+            const videoId = item.id.videoId;
+            const title = item.snippet.title;
+            const thumbnails = item.snippet.thumbnails || {};
+            const thumbnailUrl =
+                (thumbnails.medium && thumbnails.medium.url) ||
+                (thumbnails.default && thumbnails.default.url) ||
+                "images/730948705_1334483012113826_7963450557296195364_n.jpg";
+            const fallbackCover = "images/730948705_1334483012113826_7963450557296195364_n.jpg";
+
+            const resultItem = document.createElement('div');
+            resultItem.className = 'song-card'; // Tái sử dụng style của song-card
+            resultItem.style.cursor = 'pointer';
+            resultItem.innerHTML = `
+                <img src="${thumbnailUrl}" alt="Cover for ${title}" onerror="this.src='${fallbackCover}'">
+                <span>${title}</span>
+                <i class="fa-solid fa-plus song-icon"></i>
+            `;
+            resultItem.addEventListener('click', () => {
+                addAndPlaySong({ videoId, title, coverUrl: thumbnailUrl });
+                hideSearchResults();
+            });
+            resultsList.appendChild(resultItem);
+        });
+        searchResultsBody.appendChild(resultsList);
+    }
+
+    // Hiển thị popup
+    if (modalBackdrop) {
+        modalBackdrop.classList.remove('hidden');
+        modalBackdrop.classList.add('show');
+    }
+    searchResultsPopup.classList.remove('hidden');
+    void searchResultsPopup.offsetWidth; // force reflow
+    searchResultsPopup.classList.add('show');
+}
+
 if (musicSearchForm) {
     musicSearchForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -619,10 +674,10 @@ if (musicSearchForm) {
         }
  
         try {
-            const video = await searchYouTube(query);
-            if (video) {
-                addAndPlaySong({ ...video });
-                musicSearchInput.value = "";
+            const results = await searchYouTube(query);
+            if (results) {
+                displaySearchResults(results);
+                musicSearchInput.value = ""; // Xóa input sau khi tìm kiếm
             }
         } finally {
             // --- End Loading State ---
@@ -633,6 +688,19 @@ if (musicSearchForm) {
                 musicSearchButton.innerHTML = '<i class="fa-solid fa-search"></i>';
             }
         }
+    });
+}
+
+if (searchResultsClose) {
+    searchResultsClose.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hideSearchResults();
+    });
+}
+if (searchResultsPopup) {
+    searchResultsPopup.addEventListener('click', (e) => {
+        // Ngăn việc đóng popup khi nhấn vào bên trong
+        e.stopPropagation();
     });
 }
 
@@ -961,6 +1029,27 @@ const hintBtn = document.getElementById('hint-btn');
 const hintPopup = document.getElementById('hint-popup');
 const hintClose = document.getElementById('hint-close');
 
+function hideHint(){
+    if(!hintPopup || hintPopup.classList.contains('hidden')) return;
+
+    if(modalBackdrop){
+        // Chỉ ẩn lớp nền nếu popup kết quả tìm kiếm cũng đang ẩn
+        if (!searchResultsPopup || searchResultsPopup.classList.contains('hidden')) {
+            modalBackdrop.classList.remove('show');
+        }
+    }
+    hintPopup.classList.remove('show');
+    // đợi animation chạy xong rồi mới ẩn hẳn
+    setTimeout(()=>{
+        hintPopup.classList.add('hidden');
+        if(modalBackdrop){
+            if (!searchResultsPopup || searchResultsPopup.classList.contains('hidden')) {
+                modalBackdrop.classList.add('hidden');
+            }
+        }
+    }, 420);
+}
+
 if(hintBtn && hintPopup){
     function showHint(){
         if(modalBackdrop){
@@ -971,20 +1060,6 @@ if(hintBtn && hintPopup){
         // force reflow so animation reliably plays when adding .show
         void hintPopup.offsetWidth;
         hintPopup.classList.add('show');
-    }
-
-    function hideHint(){
-        if(modalBackdrop){
-            modalBackdrop.classList.remove('show');
-        }
-        hintPopup.classList.remove('show');
-        // wait for animation to finish then hide
-        setTimeout(()=>{
-            hintPopup.classList.add('hidden');
-            if(modalBackdrop){
-                modalBackdrop.classList.add('hidden');
-            }
-        }, 420);
     }
 
     hintBtn.addEventListener('click',(e)=>{
@@ -1007,24 +1082,27 @@ if(hintBtn && hintPopup){
         e.stopPropagation();
     });
 
-    document.addEventListener('click', ()=>{
-        if(!hintPopup.classList.contains('hidden')){
-            hideHint();
-        }
-    });
-
-    if(modalBackdrop){
-        modalBackdrop.addEventListener('click',(e)=>{
-            e.stopPropagation();
-            hideHint();
-        });
-    }
-
     // Ensure popup initially hidden (in case)
     if(!hintPopup.classList.contains('hidden')){
         hintPopup.classList.add('hidden');
     }
-    if(modalBackdrop && !modalBackdrop.classList.contains('hidden')){
-        modalBackdrop.classList.add('hidden');
-    }
+}
+
+// Logic chung để đóng các popup
+function hideActiveModal() {
+    hideHint();
+    hideSearchResults();
+}
+
+document.addEventListener('click', hideActiveModal);
+
+if(modalBackdrop){
+    modalBackdrop.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hideActiveModal();
+    });
+}
+
+if(modalBackdrop && !modalBackdrop.classList.contains('hidden')){
+    modalBackdrop.classList.add('hidden');
 }
