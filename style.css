@@ -999,6 +999,11 @@ body::before {
     pointer-events:auto;
 }
 
+/* Làm cho popup kết quả tìm kiếm rộng hơn */
+#search-results-popup {
+    width: min(90vw, 500px);
+}
+
 .hint-popup.show{
     animation: hintPop 420ms cubic-bezier(.22,.9,.3,1) both;
 }
