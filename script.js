@@ -1,4 +1,4 @@
-const CORRECT_PIN = "0508";
+const CORRECT_PIN = "1505";
 
 let currentPin = "";
 
@@ -10,6 +10,9 @@ document.getElementById("login-screen");
 const homeScreen =
 document.getElementById("home-screen");
 
+const loginCard =
+document.querySelector(".login-card");
+
 const pinDisplay =
 document.getElementById("pin-display");
 
@@ -18,6 +21,9 @@ document.querySelectorAll(".num");
 
 const deleteBtn =
 document.getElementById("delete-btn");
+
+const modalBackdrop =
+document.getElementById('modal-backdrop');
 
 /* PIN DISPLAY */
 
@@ -47,6 +53,10 @@ function unlock(){
     loginScreen.classList.add("hidden");
 
     homeScreen.classList.remove("hidden");
+    homeScreen.classList.add('screen-fade-in');
+    setTimeout(()=>{
+        homeScreen.classList.remove('screen-fade-in');
+    }, 540);
 }
 
 /* LOGIN FLOWER EXPLOSION */
@@ -118,6 +128,10 @@ numberButtons.forEach(btn=>{
 
                 }else{
 
+                    if(loginCard){
+                        loginCard.classList.add('shake');
+                        setTimeout(()=>loginCard.classList.remove('shake'),520);
+                    }
                     alert("Sai mật khẩu ❤️");
 
                     currentPin = "";
@@ -398,21 +412,21 @@ loadSong(currentSongIndex);
 /* LETTER */
 
 const message = `
-Gửi Bé Đức ❤️
+Gửi NiNi ❤️
 
-Cảm ơn em đã xuất hiện
-trong cuộc sống của anh.
+Cảm ơn cậu đã xuất hiện
+trong cuộc sống của tớ.
 
 Có những ngày rất bình thường,
-nhưng chỉ cần được nói chuyện với em
+nhưng chỉ cần được nói chuyện với cậu
 thì ngày đó trở nên đặc biệt hơn.
 
-Anh không biết tương lai sẽ thế nào.
+Tớ không biết tương lai sẽ thế nào.
 
 Nhưng hiện tại,
-anh rất trân trọng em.
+tớ rất trân trọng cậu.
 
-Chúc em luôn vui vẻ,
+Chúc cậu luôn vui vẻ,
 luôn hạnh phúc
 và luôn mỉm cười thật nhiều.
 
@@ -484,15 +498,21 @@ setInterval(createHeart,400);
 /* BALLOON EFFECT */
 
 const balloonImages = [
-    "images/1.jpg",
-    "images/Messenger_creation_349652983849917.jpeg",
-    "images/Messenger_creation_587886085858394.jpeg",
-    "images/Messenger_creation_794349074908446.jpeg",
-    "images/Messenger_creation_823486696153897.jpeg",
-    "images/Messenger_creation_884630373179561.jpeg",
-    "images/Messenger_creation_1630210337379056.jpeg",
-    "images/Messenger_creation_2098406523853251.jpeg",
-    "images/Messenger_creation_D83CB99C-E3DE-44BD-BD25-6E8AA8619574.jpeg"
+     "images/730948705_1334483012113826_7963450557296195364_n.jpg", 
+    "images/IMG_7520.JPG",
+    "images/IMG_7522.JPG", 
+    "images/IMG_7527.JPG", 
+    "images/IMG_7530.JPG", 
+    "images/IMG_7534.JPG", 
+    "images/IMG_7536.JPG", 
+    "images/IMG_7538.JPG", 
+    "images/IMG_7542.JPG", 
+    "images/IMG_7548.JPG", 
+    "images/IMG_7555.JPG", 
+    "images/IMG_7563.JPG", 
+    "images/IMG_7591.JPG", 
+    "images/IMG_7601.JPG"
+    
 ];
 
 let lastBalloonImageIndex = -1;
@@ -515,7 +535,8 @@ function createImageBalloon() {
     img.src = balloonImages[randomIndex];
     balloon.appendChild(img);
 
-    balloon.addEventListener('click', () => {
+    balloon.addEventListener('click', (event) => {
+        event.stopPropagation();
         const rect = img.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
@@ -523,6 +544,7 @@ function createImageBalloon() {
         for (let i = 0; i < 12; i++) {
             createBurstingFlower(centerX, centerY);
         }
+        createLoveYouText(balloon);
     });
 
     balloon.style.left = Math.random() * 80 + 10 + "%";
@@ -535,6 +557,18 @@ function createImageBalloon() {
     setTimeout(() => {
         balloon.remove();
     }, duration * 1000);
+}
+
+function createLoveYouText(balloon){
+    const loveText = document.createElement('div');
+    loveText.classList.add('balloon-love-text');
+    loveText.textContent = 'love you';
+
+    balloon.appendChild(loveText);
+
+    setTimeout(()=>{
+        loveText.remove();
+    }, 1400);
 }
 
 function startBalloonEffect() {
@@ -598,6 +632,17 @@ images.forEach(img=>{
 
         overlay.appendChild(big);
 
+        const loveBtn = document.createElement('button');
+        loveBtn.classList.add('overlay-love-btn');
+        loveBtn.innerHTML = '❤️';
+        loveBtn.setAttribute('aria-label','Thả tim');
+
+        loveBtn.addEventListener('click',(event)=>{
+            event.stopPropagation();
+            createOverlayHeart(overlay, loveBtn);
+        });
+
+        overlay.appendChild(loveBtn);
         document.body.appendChild(overlay);
 
         const flowerInterval =
@@ -656,4 +701,95 @@ function createFallingFlower(parent){
         flower.remove();
 
     },6500);
+}
+
+function createOverlayHeart(parent, button){
+    const heart = document.createElement('div');
+    heart.classList.add('overlay-heart');
+    heart.textContent = '💕';
+
+    const btnRect = button.getBoundingClientRect();
+    const parentRect = parent.getBoundingClientRect();
+
+    heart.style.left = (btnRect.left - parentRect.left + btnRect.width / 2) + 'px';
+    heart.style.top = (btnRect.top - parentRect.top + btnRect.height / 2) + 'px';
+
+    parent.appendChild(heart);
+
+    setTimeout(()=>{
+        heart.remove();
+    }, 1000);
+}
+
+/* HINT POPUP BEHAVIOR (centered with jump animation) */
+const hintBtn = document.getElementById('hint-btn');
+const hintPopup = document.getElementById('hint-popup');
+const hintClose = document.getElementById('hint-close');
+
+if(hintBtn && hintPopup){
+    function showHint(){
+        if(modalBackdrop){
+            modalBackdrop.classList.remove('hidden');
+            modalBackdrop.classList.add('show');
+        }
+        hintPopup.classList.remove('hidden');
+        // force reflow so animation reliably plays when adding .show
+        void hintPopup.offsetWidth;
+        hintPopup.classList.add('show');
+    }
+
+    function hideHint(){
+        if(modalBackdrop){
+            modalBackdrop.classList.remove('show');
+        }
+        hintPopup.classList.remove('show');
+        // wait for animation to finish then hide
+        setTimeout(()=>{
+            hintPopup.classList.add('hidden');
+            if(modalBackdrop){
+                modalBackdrop.classList.add('hidden');
+            }
+        }, 420);
+    }
+
+    hintBtn.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        if(hintPopup.classList.contains('hidden')){
+            showHint();
+        }else{
+            hideHint();
+        }
+    });
+
+    if(hintClose){
+        hintClose.addEventListener('click',(e)=>{
+            e.stopPropagation();
+            hideHint();
+        });
+    }
+
+    hintPopup.addEventListener('click', (e)=>{
+        e.stopPropagation();
+    });
+
+    document.addEventListener('click', ()=>{
+        if(!hintPopup.classList.contains('hidden')){
+            hideHint();
+        }
+    });
+
+    if(modalBackdrop){
+        modalBackdrop.addEventListener('click',(e)=>{
+            e.stopPropagation();
+            hideHint();
+        });
+    }
+
+    // Ensure popup initially hidden (in case)
+    if(!hintPopup.classList.contains('hidden')){
+        hintPopup.classList.add('hidden');
+    }
+    if(modalBackdrop && !modalBackdrop.classList.contains('hidden')){
+        modalBackdrop.classList.add('hidden');
+    }
 }

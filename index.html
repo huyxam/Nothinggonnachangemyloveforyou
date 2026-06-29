@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Bé Đức ❤️</title>
+<title>NiNi ❤️</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -17,6 +17,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 <body>
 
 <div id="hearts"></div>
+<div id="modal-backdrop" class="modal-backdrop hidden"></div>
 
 <!-- LOGIN -->
 
@@ -26,9 +27,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
 <div class="left-side">
 
-<img src="images/1.jpg" alt="avatar">
+<img src="images/730948705_1334483012113826_7963450557296195364_n.jpg" alt="avatar">
 
-<h2>Bé Đức ❤️</h2>
+<h2>NiNi ❤️</h2>
 
 <p>Nhập mật khẩu để mở quà</p>
 
@@ -44,6 +45,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 ○ ○ ○ ○
 </div>
 
+<div class="hint-container">
+    <button id="hint-btn" class="hint-btn">Gợi ý mật khẩu</button>
+
+    <div id="hint-popup" class="hint-popup hidden" role="dialog" aria-label="Gợi ý mật khẩu">
+        <div class="hint-header">
+            <span>Gợi ý mật khẩu</span>
+            <button id="hint-close" class="hint-close">×</button>
+        </div>
+        <div class="hint-body">Sinh nhật của cậu</div>
+    </div>
+</div>
 <div class="keypad">
 
 <button class="num">1</button>
@@ -79,7 +91,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 <section id="home-screen" class="hidden">
 
 <h1 class="title">
-For Bé Đức ❤️
+For NiNi ❤️
 </h1>
 
 <div class="menu-grid">
@@ -136,8 +148,8 @@ onclick="closePage('music')">
 <div class="music-player">
 
 <div class="now-playing">
-<img id="current-cover" src="images/b18127fe-bdc1-4eac-a08e-9e908db3d36c.jpg" alt="Bài đang phát">
-<h3 id="current-title">Anh</h3>
+<img id="current-cover" src="images/IMG_7520.JPG" alt="Bài đang phát">
+<h3 id="current-title">Tớ</h3>
 <div class="time-row">
 <span id="current-time">0:00</span>
 <span id="duration-time">0:00</span>
@@ -155,28 +167,28 @@ onclick="closePage('music')">
 <div class="playlist">
 <button class="song-card active" type="button"
 data-src="music/Em.mp3"
-data-title="Anh"
-data-cover="images/b18127fe-bdc1-4eac-a08e-9e908db3d36c.jpg">
-<img src="images/b18127fe-bdc1-4eac-a08e-9e908db3d36c.jpg" alt="Em Là Của Anh">
-<span>Anh</span>
+data-title="Tớ"
+data-cover="images/IMG_7520.JPG">
+<img src="images/IMG_7520.JPG" alt="Em Là Của Anh">
+<span>Tớ</span>
 <i class="fa-solid fa-play song-icon"></i>
 </button>
 
 <button class="song-card" type="button"
 data-src="music/Buông.mp3"
 data-title="Thích"
-data-cover="images/Messenger_creation_349652983849917.jpeg">
-<img src="images/Messenger_creation_349652983849917.jpeg" alt="Buông">
+data-cover="images/IMG_7536.JPG">
+<img src="images/IMG_7536.JPG" alt="Buông">
 <span>Thích</span>
 <i class="fa-solid fa-play song-icon"></i>
 </button>
 
 <button class="song-card" type="button"
 data-src="music/Không buông - Hngle, Ari.mp3"
-data-title="Em"
-data-cover="images/Messenger_creation_587886085858394.jpeg">
-<img src="images/Messenger_creation_587886085858394.jpeg" alt="Không buông">
-<span>Em</span>
+data-title="Cậu"
+data-cover="images/IMG_7555.JPG">
+<img src="images/IMG_7555.JPG" alt="Không buông">
+<span>Cậu</span>
 <i class="fa-solid fa-play song-icon"></i>
 </button>
 </div>
@@ -200,7 +212,7 @@ onclick="closePage('letter')">
 ×
 </button>
 
-<h2>💌 Gửi Bé Đức</h2>
+<h2>💌 Gửi NiNi</h2>
 
 <p id="typing"></p>
 
@@ -223,15 +235,17 @@ onclick="closePage('gallery')">
 
 <div class="gallery-grid">
 
-<img src="images/1.jpg">
-<img src="images/Messenger_creation_349652983849917.jpeg" >
-<img src="images/Messenger_creation_587886085858394.jpeg" >
-<img src="images/Messenger_creation_794349074908446.jpeg" >
-<img src="images/Messenger_creation_823486696153897.jpeg" >
-<img src="images/Messenger_creation_884630373179561.jpeg" >
-<img src="images/Messenger_creation_1630210337379056.jpeg" >
-<img src="images/Messenger_creation_2098406523853251.jpeg" >
-<img src="images/Messenger_creation_D83CB99C-E3DE-44BD-BD25-6E8AA8619574.jpeg" >
+<img src="images/730948705_1334483012113826_7963450557296195364_n.jpg">
+<img src="images/IMG_7522.JPG" >
+<img src="images/IMG_7527.JPG" >
+<img src="images/IMG_7530.JPG" >
+<img src="images/IMG_7534.JPG" >
+<img src="images/IMG_7538.JPG" >
+<img src="images/IMG_7542.JPG" >
+<img src="images/IMG_7548.JPG" >
+<img src="images/IMG_7563.JPG" >
+<img src="images/IMG_7591.JPG" >
+<img src="images/IMG_7601.JPG" >
 
 </div>
 
@@ -256,7 +270,7 @@ onclick="closePage('gift')">
 
     Những kỷ niệm của chúng ta sẽ bay cao, bay xa...
     <br>
-    Cảm ơn em vì tất cả ❤️
+    Cảm ơn cậu vì tất cả ❤️
 
 </p>
 
