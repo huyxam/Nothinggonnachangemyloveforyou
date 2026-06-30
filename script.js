@@ -421,7 +421,7 @@ function toggleSong(index){
     playCurrentSong();
 }
 
-const playlistEl = document.querySelector('.playlist');
+const playlistEl = document.querySelector('#music .playlist');
 if (playlistEl) {
     playlistEl.addEventListener('click', (e) => {
         const card = e.target.closest('.song-card');
@@ -560,8 +560,8 @@ async function searchYouTube(query) {
     return []; // Trả về mảng rỗng nếu có lỗi hoặc không có kết quả
 }
 
-function addAndPlaySong({ videoId, title, coverUrl }) {
-    const playlist = document.querySelector(".playlist");
+function addSongToPlaylist({ videoId, title, coverUrl }) {
+    const playlist = document.querySelector("#music .playlist");
     if (!playlist) return;
 
     const fallbackCover = "images/731147341_1538994267804714_5516651451943610122_n.jpg";
@@ -579,9 +579,8 @@ function addAndPlaySong({ videoId, title, coverUrl }) {
         <i class="fa-solid fa-play song-icon"></i>
     `;
 
-    playlist.prepend(newCard);
+    playlist.appendChild(newCard);
     songCards = document.querySelectorAll(".song-card");
-    toggleSong(0);
 }
 
 const searchResultsPopup = document.getElementById('search-results-popup');
@@ -634,10 +633,17 @@ function displaySearchResults(results) {
                 <span>${title}</span>
                 <i class="fa-solid fa-plus song-icon"></i>
             `;
-            resultItem.addEventListener('click', () => {
-                addAndPlaySong({ videoId, title, coverUrl: thumbnailUrl });
-                hideSearchResults();
-            });
+            const addSongHandler = function() {
+                addSongToPlaylist({ videoId, title, coverUrl: thumbnailUrl });
+
+                // Cập nhật giao diện để báo hiệu bài hát đã được thêm
+                const icon = this.querySelector('.song-icon');
+                icon.className = 'fa-solid fa-check song-icon';
+                this.style.cursor = 'default';
+                this.style.opacity = '0.7';
+                this.removeEventListener('click', addSongHandler);
+            };
+            resultItem.addEventListener('click', addSongHandler);
             resultsList.appendChild(resultItem);
         });
         searchResultsBody.appendChild(resultsList);
